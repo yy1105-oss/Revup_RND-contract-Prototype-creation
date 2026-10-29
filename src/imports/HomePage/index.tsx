@@ -1,5 +1,8 @@
+import { useState } from "react";
 import svgPaths from "./svg-6q0k2xpeut";
 import imgFrame6598 from "./cd46c7d775fc93fb37dee02ac0fc58b83b4a1aef.png";
+import { posHomeBridge } from "@/app/posHomeBridge";
+import { FileWarning } from "lucide-react";
 
 function LogoItn() {
   return (
@@ -256,43 +259,108 @@ function Frame42() {
   );
 }
 
+function FrameReportsIcon() {
+  return (
+    <div className="absolute content-stretch flex gap-[16px] items-center left-[16px] top-[12px]">
+      <div className="overflow-clip relative shrink-0 size-[20px]" data-name="Product Icon">
+        <svg className="absolute block inset-[3px] size-[14px]" fill="none" viewBox="0 0 14 14">
+          <rect x="1" y="8" width="3" height="5" rx="0.5" fill="#2C3A3A" />
+          <rect x="5.5" y="4" width="3" height="9" rx="0.5" fill="#2C3A3A" />
+          <rect x="10" y="1" width="3" height="12" rx="0.5" fill="#2C3A3A" />
+        </svg>
+      </div>
+      <div className="[word-break:break-word] flex flex-col font-['Clan_OT:Medium',sans-serif] h-[24px] justify-center leading-[0] not-italic relative shrink-0 text-[#092425] text-[12px] tracking-[-0.24px] w-[140px]">
+        <p className="leading-[normal]">Reports</p>
+      </div>
+    </div>
+  );
+}
+
+function ChevronDown({ expanded = false }: { expanded?: boolean }) {
+  return (
+    <div
+      className="absolute left-[208px] overflow-clip size-[16px] top-[16px] transition-transform"
+      style={{ transform: expanded ? "rotate(180deg)" : "none" }}
+      data-name="chevron-down"
+    >
+      <div className="absolute inset-0 overflow-clip" data-name="chevron-down">
+        <div className="absolute inset-[33.33%_20.83%_32.1%_20.83%]" data-name="Vector">
+          <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 9.33333 5.53061">
+            <path d={svgPaths.p18d92800} fill="var(--fill-0, #687576)" id="Vector" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Frame() {
+  const [expandedSection, setExpandedSection] = useState<"contract" | "reports" | null>(null);
+  const toggleSection = (section: "contract" | "reports") => {
+    setExpandedSection((s) => (s === section ? null : section));
+  };
+
   return (
     <div className="content-stretch flex flex-col items-start justify-center relative shrink-0 w-full">
       <div className="h-[48px] relative shrink-0 w-[240px]" data-name="Home">
         <Frame32 />
       </div>
       <div className="h-[48px] relative shrink-0 w-[240px]" data-name="Spend">
-        <div className="absolute left-[208px] overflow-clip size-[16px] top-[16px]" data-name="chevron-down">
-          <div className="absolute inset-0 overflow-clip" data-name="chevron-down">
-            <div className="absolute inset-[33.33%_20.83%_32.1%_20.83%]" data-name="Vector">
-              <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 9.33333 5.53061">
-                <path d={svgPaths.p18d92800} fill="var(--fill-0, #687576)" id="Vector" />
-              </svg>
-            </div>
-          </div>
-        </div>
+        <ChevronDown />
         <Frame33 />
       </div>
-      <div className="h-[48px] relative shrink-0 w-[240px]" data-name="contract">
+      <div
+        className="h-[48px] relative shrink-0 w-[240px] cursor-pointer hover:bg-[#f3f4f4]"
+        data-name="contract"
+        onClick={() => toggleSection("contract")}
+      >
+        <ChevronDown expanded={expandedSection === "contract"} />
         <Frame34 />
       </div>
-      <div className="content-stretch flex flex-col gap-[10px] h-[32px] items-start justify-center px-[8px] py-[4px] relative shrink-0" data-name="-my contracts">
-        <div className="bg-[#f3f4f4] h-[32px] relative rounded-[8px] shrink-0 w-[224px]" data-name="Hover" />
-        <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Lato:Regular',sans-serif] h-[16px] justify-center leading-[0] left-[52px] not-italic text-[#092425] text-[12px] top-1/2 w-[152px]">
-          <p className="leading-[14px]">Contracts</p>
-        </div>
+      {expandedSection === "contract" && (
+        <>
+          <div
+            className="group content-stretch cursor-pointer flex flex-col gap-[10px] h-[32px] items-start justify-center px-[8px] py-[4px] relative shrink-0"
+            data-name="-my contracts"
+            onClick={() => posHomeBridge.onOpenContracts()}
+          >
+            <div className="bg-transparent group-hover:bg-[#f3f4f4] h-[32px] relative rounded-[8px] shrink-0 w-[224px]" data-name="Hover" />
+            <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Lato:Regular',sans-serif] h-[16px] justify-center leading-[0] left-[52px] not-italic text-[#092425] text-[12px] top-1/2 w-[152px]">
+              <p className="leading-[14px]">Contracts</p>
+            </div>
+          </div>
+          <div className="content-stretch flex flex-col gap-[10px] h-[40px] items-start justify-center px-[8px] py-[4px] relative shrink-0 w-[240px]" data-name="-Price Report">
+            <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Lato:Regular',sans-serif] h-[16px] justify-center leading-[0] left-[52px] not-italic text-[#212121] text-[12px] top-1/2 w-[152px]">
+              <p className="leading-[14px]">Price Report</p>
+            </div>
+          </div>
+          <div className="content-stretch flex flex-col gap-[10px] h-[32px] items-start justify-center px-[8px] py-[4px] relative shrink-0 w-[240px]" data-name="-Program  Admin">
+            <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Lato:Regular',sans-serif] h-[16px] justify-center leading-[0] left-[52px] not-italic text-[#092425] text-[12px] top-1/2 w-[152px]">
+              <p className="leading-[14px]">Program Admin</p>
+            </div>
+          </div>
+        </>
+      )}
+      <div
+        className="h-[48px] relative shrink-0 w-[240px] cursor-pointer hover:bg-[#f3f4f4]"
+        data-name="Reports"
+        onClick={() => toggleSection("reports")}
+      >
+        <ChevronDown expanded={expandedSection === "reports"} />
+        <FrameReportsIcon />
       </div>
-      <div className="content-stretch flex flex-col gap-[10px] h-[40px] items-start justify-center px-[8px] py-[4px] relative shrink-0 w-[240px]" data-name="-Price Report">
-        <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Lato:Regular',sans-serif] h-[16px] justify-center leading-[0] left-[52px] not-italic text-[#212121] text-[12px] top-1/2 w-[152px]">
-          <p className="leading-[14px]">Price Report</p>
+      {expandedSection === "reports" && (
+        <div
+          className="group content-stretch cursor-pointer flex flex-col gap-[10px] h-[32px] items-start justify-center px-[8px] py-[4px] relative shrink-0"
+          data-name="-pos dashboard"
+          onClick={() => posHomeBridge.onOpenPosDashboardNav()}
+        >
+          <div className="bg-transparent group-hover:bg-[#f3f4f4] h-[32px] relative rounded-[8px] shrink-0 w-[224px]" data-name="Hover" />
+          <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Lato:Regular',sans-serif] h-[16px] justify-center leading-[0] left-[52px] not-italic text-[#092425] text-[12px] top-1/2 w-[152px]">
+            <p className="leading-[14px]">POS Reporting</p>
+          </div>
         </div>
-      </div>
-      <div className="content-stretch flex flex-col gap-[10px] h-[32px] items-start justify-center px-[8px] py-[4px] relative shrink-0 w-[240px]" data-name="-Program  Admin">
-        <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Lato:Regular',sans-serif] h-[16px] justify-center leading-[0] left-[52px] not-italic text-[#092425] text-[12px] top-1/2 w-[152px]">
-          <p className="leading-[14px]">Program Admin</p>
-        </div>
-      </div>
+      )}
       <div className="h-[48px] relative shrink-0 w-[240px]" data-name="EX/In">
         <div className="absolute left-[208px] overflow-clip size-[16px] top-[16px]" data-name="chevron-down">
           <div className="absolute inset-0 overflow-clip" data-name="chevron-down">
@@ -632,9 +700,9 @@ function Frame12() {
 
 function Frame7() {
   return (
-    <div className="bg-white content-stretch flex gap-[4px] h-[20px] items-center overflow-clip relative shrink-0">
+    <div className="bg-white content-stretch flex gap-[4px] min-h-[20px] items-center relative shrink-0 flex-wrap">
       <Frame12 />
-      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#092425] text-[0px] whitespace-nowrap">
+      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#092425] text-[0px]">
         <span className="font-['Lato:SemiBold',sans-serif] leading-[16px] text-[12px]">3 new</span>
         <span className="leading-[16px] text-[12px]">{` `}</span>
         <span className="leading-[16px] text-[#687576] text-[12px]">orders in</span>
@@ -659,9 +727,9 @@ function Frame13() {
 
 function Frame11() {
   return (
-    <div className="bg-white content-stretch flex gap-[4px] h-[20px] items-center overflow-clip relative shrink-0">
+    <div className="bg-white content-stretch flex gap-[4px] min-h-[20px] items-center relative shrink-0 flex-wrap">
       <Frame13 />
-      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#092425] text-[0px] whitespace-nowrap">
+      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#092425] text-[0px]">
         <span className="font-['Lato:SemiBold',sans-serif] leading-[16px] text-[12px]">29 total</span>
         <span className="leading-[16px] text-[12px]">{` `}</span>
         <span className="leading-[16px] text-[#687576] text-[12px]">orders in</span>
@@ -686,9 +754,9 @@ function Frame14() {
 
 function Frame6() {
   return (
-    <div className="bg-white content-stretch flex gap-[4px] h-[20px] items-center overflow-clip relative shrink-0">
+    <div className="bg-white content-stretch flex gap-[4px] min-h-[20px] items-center relative shrink-0 flex-wrap">
       <Frame14 />
-      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#092425] text-[0px] whitespace-nowrap">
+      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#092425] text-[0px]">
         <span className="font-['Lato:SemiBold',sans-serif] leading-[16px] text-[12px]">4 new</span>
         <span className="leading-[16px] text-[12px]">{` `}</span>
         <span className="leading-[16px] text-[#687576] text-[12px]">orders marked</span>
@@ -713,9 +781,9 @@ function Frame16() {
 
 function Frame8() {
   return (
-    <div className="bg-white content-stretch flex gap-[4px] h-[20px] items-center overflow-clip relative shrink-0">
+    <div className="bg-white content-stretch flex gap-[4px] min-h-[20px] items-center relative shrink-0 flex-wrap">
       <Frame16 />
-      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#092425] text-[0px] whitespace-nowrap">
+      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#092425] text-[0px]">
         <span className="font-['Lato:SemiBold',sans-serif] leading-[16px] text-[12px]">2 new</span>
         <span className="leading-[16px] text-[12px]">{` `}</span>
         <span className="leading-[16px] text-[#687576] text-[12px]">orders have been</span>
@@ -740,9 +808,9 @@ function Frame17() {
 
 function Frame9() {
   return (
-    <div className="bg-white content-stretch flex gap-[4px] h-[20px] items-center overflow-clip relative shrink-0">
+    <div className="bg-white content-stretch flex gap-[4px] min-h-[20px] items-center relative shrink-0 flex-wrap">
       <Frame17 />
-      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#092425] text-[0px] whitespace-nowrap">
+      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#092425] text-[0px]">
         <span className="font-['Lato:SemiBold',sans-serif] leading-[16px] text-[12px]">1 new</span>
         <span className="leading-[16px] text-[12px]">{` `}</span>
         <span className="leading-[16px] text-[#687576] text-[12px]">order in</span>
@@ -767,9 +835,9 @@ function Frame18() {
 
 function Frame10() {
   return (
-    <div className="bg-white content-stretch flex gap-[4px] h-[20px] items-center overflow-clip relative shrink-0">
+    <div className="bg-white content-stretch flex gap-[4px] min-h-[20px] items-center relative shrink-0 flex-wrap">
       <Frame18 />
-      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#092425] text-[0px] whitespace-nowrap">
+      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#092425] text-[0px]">
         <span className="font-['Lato:SemiBold',sans-serif] leading-[16px] text-[12px]">3 total</span>
         <span className="leading-[16px] text-[12px]">{` `}</span>
         <span className="leading-[16px] text-[#687576] text-[12px]">orders in</span>
@@ -784,7 +852,7 @@ function Frame10() {
 
 function TaskList() {
   return (
-    <div className="bg-white content-stretch flex flex-col gap-[8px] items-start overflow-clip relative shrink-0 w-[268px]" data-name="Task List">
+    <div className="bg-white content-stretch flex flex-col gap-[8px] items-start overflow-clip relative shrink-0 w-full" data-name="Task List">
       <Frame7 />
       <Frame11 />
       <Frame6 />
@@ -797,7 +865,7 @@ function TaskList() {
 
 function Title2() {
   return (
-    <div className="absolute backdrop-blur-[16px] bg-white content-stretch flex flex-col gap-[8px] items-start left-[32px] overflow-clip p-[16px] rounded-[8px] top-[94px] w-[300px]" data-name="Title">
+    <div className="absolute backdrop-blur-[16px] bg-white content-stretch flex flex-col gap-[8px] items-start left-[32px] right-[32px] overflow-clip p-[16px] rounded-[8px] top-[94px] max-w-[300px]" data-name="Title">
       <Frame31 />
       <TaskList />
     </div>
@@ -863,7 +931,7 @@ function Frame19() {
   return (
     <div className="flex-[1_0_0] h-full min-w-px relative rounded-bl-[10px] rounded-br-[60px] rounded-tl-[10px] rounded-tr-[10px]">
       <div aria-hidden className="absolute border border-[#dfe2e2] border-solid inset-0 pointer-events-none rounded-bl-[10px] rounded-br-[60px] rounded-tl-[10px] rounded-tr-[10px]" />
-      <div className="[word-break:break-word] content-stretch flex flex-col gap-[24px] items-start not-italic p-[32px] relative size-full whitespace-nowrap">
+      <div className="[word-break:break-word] content-stretch flex flex-col gap-[24px] items-start not-italic p-[32px] relative size-full overflow-auto">
         <Frame3 />
         <Oms />
         <Oms1 />
@@ -886,7 +954,7 @@ function Frame4() {
 
 function Oms3() {
   return (
-    <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-full whitespace-nowrap" data-name="OMS">
+    <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-full" data-name="OMS">
       <p className="font-['Lato:SemiBold',sans-serif] leading-[20px] relative shrink-0 text-[#2c3a3a] text-[16px] tracking-[-0.32px]">OMS - Mar 2024 Product Release Notes</p>
       <p className="font-['Lato:Regular',sans-serif] leading-[16px] relative shrink-0 text-[#2c3a3a] text-[12px]">Teaser sentence with release highlights</p>
       <p className="[text-decoration-skip-ink:none] [text-underline-position:from-font] capitalize decoration-from-font decoration-solid font-['Lato:SemiBold',sans-serif] leading-[16px] relative shrink-0 text-[#038487] text-[12px] underline">Read Now</p>
@@ -897,16 +965,16 @@ function Oms3() {
 function Freight() {
   return (
     <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-full" data-name="Freight">
-      <p className="font-['Lato:SemiBold',sans-serif] leading-[20px] relative shrink-0 text-[#2c3a3a] text-[16px] tracking-[-0.32px] whitespace-pre">{`Freight -  Mar 2024 Product Release Notes`}</p>
-      <p className="font-['Lato:Regular',sans-serif] leading-[16px] relative shrink-0 text-[#2c3a3a] text-[12px] whitespace-nowrap">Teaser sentence with release highlights</p>
-      <p className="[text-decoration-skip-ink:none] [text-underline-position:from-font] capitalize decoration-from-font decoration-solid font-['Lato:SemiBold',sans-serif] leading-[16px] relative shrink-0 text-[#038487] text-[12px] underline whitespace-nowrap">Read Now</p>
+      <p className="font-['Lato:SemiBold',sans-serif] leading-[20px] relative shrink-0 text-[#2c3a3a] text-[16px] tracking-[-0.32px]">{`Freight -  Mar 2024 Product Release Notes`}</p>
+      <p className="font-['Lato:Regular',sans-serif] leading-[16px] relative shrink-0 text-[#2c3a3a] text-[12px]">Teaser sentence with release highlights</p>
+      <p className="[text-decoration-skip-ink:none] [text-underline-position:from-font] capitalize decoration-from-font decoration-solid font-['Lato:SemiBold',sans-serif] leading-[16px] relative shrink-0 text-[#038487] text-[12px] underline">Read Now</p>
     </div>
   );
 }
 
 function CaRma() {
   return (
-    <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-full whitespace-nowrap" data-name="CaRMA">
+    <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-full" data-name="CaRMA">
       <p className="font-['Lato:SemiBold',sans-serif] leading-[20px] relative shrink-0 text-[#2c3a3a] text-[16px] tracking-[-0.32px]">CaRMA - Mar 2024 Product Release Notes</p>
       <p className="font-['Lato:Regular',sans-serif] leading-[16px] relative shrink-0 text-[#2c3a3a] text-[12px]">Teaser sentence with release highlights</p>
       <p className="[text-decoration-skip-ink:none] [text-underline-position:from-font] capitalize decoration-from-font decoration-solid font-['Lato:SemiBold',sans-serif] leading-[16px] relative shrink-0 text-[#038487] text-[12px] underline">Read Now</p>
@@ -917,7 +985,7 @@ function CaRma() {
 function Frame20() {
   return (
     <div className="bg-[#f3f4f4] flex-[1_0_0] h-full min-w-px relative rounded-bl-[10px] rounded-br-[10px] rounded-tl-[60px] rounded-tr-[10px]">
-      <div className="[word-break:break-word] content-stretch flex flex-col gap-[24px] items-start not-italic p-[32px] relative size-full">
+      <div className="[word-break:break-word] content-stretch flex flex-col gap-[24px] items-start not-italic p-[32px] relative size-full overflow-auto">
         <Frame4 />
         <Oms3 />
         <Freight />
@@ -939,54 +1007,102 @@ function Frame45() {
 
 function Frame5() {
   return (
-    <div className="content-stretch flex gap-[10px] items-center overflow-clip py-px relative shrink-0">
-      <div className="[word-break:break-word] flex flex-col font-['Lato:SemiBold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#092425] text-[18px] tracking-[-0.36px] whitespace-nowrap">
-        <p className="leading-[22px]">Shape the Future of the Products You Use</p>
+    <div className="content-stretch flex gap-[10px] items-center justify-between overflow-clip py-px relative shrink-0 w-full">
+      <div className="[word-break:break-word] flex flex-col font-['Lato:SemiBold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#092425] text-[17px] tracking-[-0.34px] whitespace-nowrap">
+        <p className="leading-[22px]">POS Data Alert</p>
+      </div>
+      <p
+        data-name="pos-view-all"
+        onClick={() => posHomeBridge.onViewAll()}
+        className="cursor-pointer font-['Lato:SemiBold',sans-serif] leading-[16px] not-italic text-[#038487] text-[12px] whitespace-nowrap hover:underline"
+      >
+        View All →
+      </p>
+    </div>
+  );
+}
+
+function PosAlertRow({
+  alertId,
+  severity,
+  distributor,
+  days,
+  pct,
+}: {
+  alertId: string;
+  severity: "critical" | "warning";
+  distributor: string;
+  days: number;
+  pct?: number;
+}) {
+  const critical = severity === "critical";
+  return (
+    <div
+      data-name={`pos-home-alert-${alertId}`}
+      onClick={() => posHomeBridge.onOpenAlert(alertId)}
+      className="content-stretch cursor-pointer flex items-center justify-between gap-[10px] relative shrink-0 w-full py-[9px] px-[8px] -mx-[8px] rounded-[10px] transition-colors hover:bg-[#f3f6f6]"
+    >
+      <div className="flex items-center gap-[10px] min-w-0">
+        <span className={`h-[32px] w-[32px] rounded-[9px] flex items-center justify-center shrink-0 ${critical ? "bg-[#c0342d]" : "bg-[#eb8909]"}`}>
+          <FileWarning size={15} className="text-white" />
+        </span>
+        <div className="flex flex-col min-w-0">
+          <p className="[word-break:break-word] font-['Lato:SemiBold',sans-serif] leading-[18px] not-italic relative text-[#2c3a3a] text-[14px] tracking-[-0.28px] truncate">{distributor}</p>
+          <p className="font-['Lato:Regular',sans-serif] leading-[15px] not-italic text-[#8c9798] text-[11.5px]">
+            {days} day{days === 1 ? "" : "s"} since last file
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-col items-end gap-[3px] shrink-0">
+        <span
+          className={`text-[9px] font-['Lato:Bold',sans-serif] uppercase tracking-wide px-[6px] py-[2px] rounded-[6px] ${
+            critical ? "bg-[#fdecec] text-[#c0342d]" : "bg-[#fff4e6] text-[#b4650f]"
+          }`}
+        >
+          {critical ? "Critical" : "Warning"}
+        </span>
+        {typeof pct === "number" && (
+          <span className={`text-[12px] font-['Lato:Bold',sans-serif] ${pct < 0 ? "text-[#c0342d]" : "text-[#1a7a4c]"}`}>
+            {pct > 0 ? "+" : ""}
+            {pct}%
+          </span>
+        )}
       </div>
     </div>
   );
 }
 
-function Frame22() {
-  return (
-    <div className="content-stretch flex flex-col items-start overflow-clip relative shrink-0 w-full">
-      <p className="[word-break:break-word] font-['Lato:Medium',sans-serif] h-[43px] leading-[20px] not-italic relative shrink-0 text-[#2c3a3a] text-[16px] tracking-[-0.32px] w-full">Join our product design team for workshops on the following upcoming features and enhancements:</p>
-    </div>
-  );
-}
-
 function Oms4() {
-  return (
-    <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-full" data-name="OMS">
-      <p className="[word-break:break-word] font-['Lato:Bold',sans-serif] leading-[12px] not-italic relative shrink-0 text-[#687576] text-[10px] tracking-[0.4px] uppercase whitespace-nowrap">february 23-28, 2024</p>
-      <div className="h-[4px] relative shrink-0 w-full" data-name="spacer 4px" />
-      <p className="[word-break:break-word] font-['Lato:Medium',sans-serif] leading-[20px] not-italic relative shrink-0 text-[#2c3a3a] text-[16px] tracking-[-0.32px] whitespace-nowrap">OMS - RFQ Module</p>
-      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[16px] not-italic relative shrink-0 text-[#2c3a3a] text-[12px] whitespace-nowrap">{`User Interviews with Buyers and Suppliers `}</p>
-      <p className="[text-decoration-skip-ink:none] [text-underline-position:from-font] [word-break:break-word] capitalize decoration-from-font decoration-solid font-['Lato:SemiBold',sans-serif] leading-[16px] not-italic relative shrink-0 text-[#038487] text-[12px] underline whitespace-nowrap">View Meeting Times</p>
-    </div>
-  );
+  return <PosAlertRow alertId="a1" severity="critical" distributor="Network Services" days={9} pct={-23} />;
 }
 
 function Oms5() {
-  return (
-    <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-full" data-name="OMS">
-      <p className="[word-break:break-word] font-['Lato:Bold',sans-serif] leading-[12px] not-italic relative shrink-0 text-[#687576] text-[10px] tracking-[0.4px] uppercase whitespace-nowrap">february 20-24, 2024</p>
-      <div className="h-[4px] relative shrink-0 w-full" data-name="spacer 4px" />
-      <p className="[word-break:break-word] font-['Lato:Medium',sans-serif] leading-[20px] not-italic relative shrink-0 text-[#2c3a3a] text-[16px] tracking-[-0.32px] whitespace-nowrap">CaRMA - Contracts Renewal</p>
-      <p className="[word-break:break-word] font-['Lato:Regular',sans-serif] leading-[16px] not-italic relative shrink-0 text-[#2c3a3a] text-[12px] whitespace-nowrap">Design Reviews and Q/A</p>
-      <p className="[text-decoration-skip-ink:none] [text-underline-position:from-font] [word-break:break-word] capitalize decoration-from-font decoration-solid font-['Lato:SemiBold',sans-serif] leading-[16px] not-italic relative shrink-0 text-[#038487] text-[12px] underline whitespace-nowrap">View Meeting Times</p>
-    </div>
-  );
+  return <PosAlertRow alertId="a2" severity="critical" distributor="Benny Keith" days={19} pct={-18} />;
+}
+
+function PosAlertRow3() {
+  return <PosAlertRow alertId="a3" severity="critical" distributor="Greco" days={44} pct={-60} />;
+}
+
+function PosAlertRow4() {
+  return <PosAlertRow alertId="a4" severity="warning" distributor="Reinhart FoodService" days={12} />;
 }
 
 function Frame21() {
   return (
-    <div className="bg-[#e9f7f0] flex-[1_0_0] h-full min-w-px relative rounded-bl-[60px] rounded-br-[10px] rounded-tl-[10px] rounded-tr-[10px]">
-      <div className="content-stretch flex flex-col gap-[24px] items-start p-[32px] relative size-full">
+    <div
+      className="bg-white border border-[#eef0f0] flex-[1_0_0] h-full min-w-px relative rounded-[16px] shadow-[0_1px_2px_rgba(16,24,27,0.04),0_8px_24px_rgba(16,24,27,0.04)]"
+      data-name="pos-alerts-widget"
+    >
+      <div className="content-stretch flex flex-col gap-[14px] items-start p-[26px] relative size-full overflow-auto">
         <Frame5 />
-        <Frame22 />
-        <Oms4 />
-        <Oms5 />
+        <div className="w-full h-px bg-[#eef0f0]" />
+        <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-full">
+          <Oms4 />
+          <Oms5 />
+          <PosAlertRow3 />
+          <PosAlertRow4 />
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,10 @@
-import { useState, lazy, Suspense, startTransition } from "react";
+import { useEffect, useState, lazy, Suspense, startTransition } from "react";
 import CreateContractPanel from "./CreateContractPanel";
+import PosDashboard from "./PosDashboard";
+import RevupAiAgent from "./RevupAiAgent";
+import AppSidebar from "./AppSidebar";
+import { posHomeBridge } from "./posHomeBridge";
+import { INITIAL_ALERTS } from "./posShared";
 import AContractPageOperator from "@/imports/AContractPageOperator";
 import BackToProgramList from "@/imports/BackToProgramList";
 import B8 from "@/imports/B8";
@@ -22,7 +27,8 @@ type Screen =
   | "item-tool"
   | "item-tool-alt"
   | "a45"
-  | "notify-modal";
+  | "notify-modal"
+  | "pos-dashboard";
 
 const SCREENS: { id: Screen; label: string }[] = [
   { id: "home", label: "Home" },
@@ -33,6 +39,7 @@ const SCREENS: { id: Screen; label: string }[] = [
   { id: "item-tool-alt", label: "Item Tool (Alt)" },
   { id: "browse-catalog", label: "Browse Catalog" },
   { id: "notify-modal", label: "Notify Modal" },
+  { id: "pos-dashboard", label: "POS Reporting" },
 ];
 
 function PrototypeNav({
@@ -71,36 +78,91 @@ function PrototypeNav({
   );
 }
 
+function SidebarOverlay({
+  activeSub,
+  onNavigateHome,
+  onNavigatePosDashboard,
+  onNavigateContracts,
+}: {
+  activeSub?: "contracts" | "pos-dashboard";
+  onNavigateHome: () => void;
+  onNavigatePosDashboard: () => void;
+  onNavigateContracts: () => void;
+}) {
+  return (
+    <div className="absolute top-0 left-0 h-full" style={{ zIndex: 30 }}>
+      <AppSidebar
+        activeSub={activeSub}
+        onNavigateHome={onNavigateHome}
+        onNavigatePosDashboard={onNavigatePosDashboard}
+        onNavigateContracts={onNavigateContracts}
+      />
+    </div>
+  );
+}
+
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
   const navigate = (s: Screen) => startTransition(() => setScreen(s));
   const [createPanelOpen, setCreatePanelOpen] = useState(false);
+  const [navVisible, setNavVisible] = useState(false);
+  const navOffset = navVisible ? 36 : 0;
+  const [posFocusAlertId, setPosFocusAlertId] = useState<string | null>(null);
+
+  useEffect(() => {
+    posHomeBridge.onViewAll = () => {
+      setPosFocusAlertId(null);
+      navigate("pos-dashboard");
+    };
+    posHomeBridge.onOpenPosDashboardNav = () => {
+      setPosFocusAlertId(null);
+      navigate("pos-dashboard");
+    };
+    posHomeBridge.onOpenAlert = (alertId: string) => {
+      setPosFocusAlertId(alertId);
+      navigate("pos-dashboard");
+    };
+    posHomeBridge.onOpenContracts = () => navigate("my-contracts");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const goToPosAlert = (alertId: string) => {
+    setPosFocusAlertId(alertId);
+    navigate("pos-dashboard");
+  };
+
+  const goToPosDashboard = () => {
+    setPosFocusAlertId(null);
+    navigate("pos-dashboard");
+  };
+  const goHome = () => navigate("home");
+  const goToContracts = () => navigate("my-contracts");
 
   return (
     <div className="size-full relative" style={{ fontFamily: "'Lato', sans-serif" }}>
-      <PrototypeNav current={screen} onSelect={navigate} />
+      {navVisible && <PrototypeNav current={screen} onSelect={navigate} />}
 
-      {/* Offset for nav bar */}
-      <div className="pt-[36px] size-full">
+      {/* Hidden toggle for the prototype nav bar — click this corner to bring it back */}
+      <div
+        onClick={() => setNavVisible((v) => !v)}
+        title="Toggle prototype nav"
+        style={{ position: "fixed", top: 0, left: 0, width: 14, height: 14, zIndex: 100, cursor: "pointer" }}
+      />
+
+      {/* Offset for nav bar only when visible */}
+      <div className={navVisible ? "pt-[36px] size-full" : "size-full"}>
         <div className="size-full overflow-auto">
           {screen === "home" && (
-            <div className="relative" style={{ width: "100%", height: "calc(100vh - 36px)" }}>
+            <div className="relative" style={{ width: "100%", height: `calc(100vh - ${navOffset}px)` }}>
               <HomePage />
-              {/* "Contracts" sub-nav item → My Contracts
-                  NavHeader(248) + Divider(16) + Home(48) + Spend(48) + Contract(48) = top 408, h=32 */}
-              <div
-                className="absolute cursor-pointer"
-                style={{ top: 408, left: 0, width: 240, height: 32, zIndex: 10 }}
-                onClick={() => navigate("my-contracts")}
-                title="Contracts → My Contracts"
-              />
             </div>
           )}
 
           {screen === "my-contracts" && (
             <Suspense fallback={<div className="size-full flex items-center justify-center text-sm" style={{ color: "#687576" }}>Loading…</div>}>
-              <div className="relative" style={{ width: "100%", height: "calc(100vh - 36px)", overflow: "hidden" }}>
+              <div className="relative" style={{ width: "100%", height: `calc(100vh - ${navOffset}px)`, overflow: "hidden" }}>
                 <MyContract />
+                <SidebarOverlay activeSub="contracts" onNavigateHome={goHome} onNavigatePosDashboard={goToPosDashboard} onNavigateContracts={goToContracts} />
 
                 {/* "Create Contract" button hotspot — global header 56px + page-header 56px */}
                 {!createPanelOpen && (
@@ -124,9 +186,10 @@ export default function App() {
           {screen === "contract-operator" && (
             <div
               className="relative"
-              style={{ width: "100%", height: "calc(100vh - 36px)" }}
+              style={{ width: "100%", height: `calc(100vh - ${navOffset}px)` }}
             >
               <AContractPageOperator />
+              <SidebarOverlay onNavigateHome={goHome} onNavigatePosDashboard={goToPosDashboard} onNavigateContracts={goToContracts} />
               {/* Invisible hotspots for navigation */}
               {/* "Notify" button → notify modal */}
               <div
@@ -147,7 +210,7 @@ export default function App() {
           {screen === "browse-catalog" && (
             <div
               className="relative"
-              style={{ width: "100%", height: "calc(100vh - 36px)" }}
+              style={{ width: "100%", height: `calc(100vh - ${navOffset}px)` }}
             >
               <BackToProgramList />
             </div>
@@ -155,9 +218,10 @@ export default function App() {
           {screen === "item-tool" && (
             <div
               className="relative"
-              style={{ width: "100%", height: "calc(100vh - 36px)" }}
+              style={{ width: "100%", height: `calc(100vh - ${navOffset}px)` }}
             >
               <B8 />
+              <SidebarOverlay onNavigateHome={goHome} onNavigatePosDashboard={goToPosDashboard} onNavigateContracts={goToContracts} />
               {/* Browse Catalog button hotspot */}
               <div
                 className="absolute cursor-pointer"
@@ -169,17 +233,19 @@ export default function App() {
           )}
           {screen === "item-tool-alt" && (
             <Suspense fallback={<div className="size-full flex items-center justify-center text-sm" style={{ color: "#687576" }}>Loading…</div>}>
-              <div className="relative" style={{ width: "100%", height: "calc(100vh - 36px)" }}>
+              <div className="relative" style={{ width: "100%", height: `calc(100vh - ${navOffset}px)` }}>
                 <B8_1 />
+                <SidebarOverlay onNavigateHome={goHome} onNavigatePosDashboard={goToPosDashboard} onNavigateContracts={goToContracts} />
               </div>
             </Suspense>
           )}
           {screen === "a45" && (
             <div
               className="relative"
-              style={{ width: "100%", height: "calc(100vh - 36px)" }}
+              style={{ width: "100%", height: `calc(100vh - ${navOffset}px)` }}
             >
               <A45 />
+              <SidebarOverlay onNavigateHome={goHome} onNavigatePosDashboard={goToPosDashboard} onNavigateContracts={goToContracts} />
               {/* Submit → Item Tool */}
               <div
                 className="absolute cursor-pointer"
@@ -189,10 +255,15 @@ export default function App() {
               />
             </div>
           )}
+          {screen === "pos-dashboard" && (
+            <div className="relative" style={{ width: "100%", height: `calc(100vh - ${navOffset}px)` }}>
+              <PosDashboard onExitHome={() => navigate("home")} onNavigateContracts={goToContracts} focusAlertId={posFocusAlertId} />
+            </div>
+          )}
           {screen === "notify-modal" && (
             <div
               className="relative"
-              style={{ width: "100%", height: "calc(100vh - 36px)" }}
+              style={{ width: "100%", height: `calc(100vh - ${navOffset}px)` }}
             >
               <B14 />
               {/* Cancel / backdrop → back to contract */}
@@ -213,6 +284,8 @@ export default function App() {
           )}
         </div>
       </div>
+
+      {screen === "home" && <RevupAiAgent alerts={INITIAL_ALERTS} onOpenAlert={goToPosAlert} />}
     </div>
   );
 }
